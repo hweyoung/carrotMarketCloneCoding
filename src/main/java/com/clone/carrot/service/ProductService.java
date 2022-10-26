@@ -23,6 +23,7 @@ public class ProductService {
     }
 
     public Product getProduct(Long productIdx) {
+        System.out.println("getProduct");
         Product product = productRepository.findProductByProductIdx(productIdx);
         return product;
     }
@@ -33,9 +34,9 @@ public class ProductService {
     }
 
     @Transactional
-    public void deleteProduct(ProductRequest.delete delete) {
-        Product product = getProduct(delete.getProductId());
-        if(!delete.getUserCode().equals(product.getUser().getCode()))
+    public void deleteProduct(String userCode, Long productId) {
+        Product product = getProduct(productId);
+        if(!userCode.equals(product.getUser().getCode()))
             throw new IllegalArgumentException("잘못된 유저의 접근");
         productRepository.delete(product);
     }

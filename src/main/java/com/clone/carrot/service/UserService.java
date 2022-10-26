@@ -36,8 +36,8 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUser(UserRequest.update update) {
-        User user = getUserByCode(update.getUserCode());
+    public void updateUser(String userCode,UserRequest.update update) {
+        User user = getUserByCode(userCode);
         user.update(update);
         userRepository.save(user);
     }

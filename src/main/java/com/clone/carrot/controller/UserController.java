@@ -1,5 +1,6 @@
 package com.clone.carrot.controller;
 
+import com.clone.carrot.config.JwtService;
 import com.clone.carrot.domain.User;
 import com.clone.carrot.dto.JsonResponse;
 import com.clone.carrot.dto.UserRequest;
@@ -11,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 @Slf4j
 @RestController
@@ -18,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final MessageService messageService;
     private final UserService userService;
+    private final JwtService jwtService;
+
 
     //로그인시 핸드폰 인증
     @PostMapping("/user/phone")
@@ -39,12 +44,14 @@ public class UserController {
     @PostMapping("/user/login")
     public ResponseEntity<JsonResponse> loginUser(@RequestBody UserRequest.loginUser loginUser){
         User user = null;
+        String token;
         try{
             user = userService.getUserByPhone(loginUser.getPhone());
+            token = jwtService.createToken(user.getCode());
         }catch (IllegalArgumentException e){
             return ResponseEntity.badRequest().body(new JsonResponse(400,false,"loginUser","redirect JoinUser"));
         }
-        return ResponseEntity.ok(new JsonResponse(200,true,"loginUser",user.getCode()));
+        return ResponseEntity.ok(new JsonResponse(200,true,"loginUser",token));
     }
 
     @PostMapping("/user/join")
@@ -61,7 +68,8 @@ public class UserController {
                     .code(code).build();
             System.out.println("user : "+user.toString());
             user = userService.joinUser(user);
-            return ResponseEntity.ok(new JsonResponse(200,true,"joinUser",user.getCode()));
+            String token = jwtService.createToken(user.getCode());
+            return ResponseEntity.ok(new JsonResponse(200,true,"joinUser", token));
         }
             return ResponseEntity.badRequest().body(new JsonResponse(400,false,"loginUser","이미 회원가입된 유저"));
     }
@@ -81,9 +89,11 @@ public class UserController {
         return ResponseEntity.ok(new JsonResponse(200,true,"getUser",response));
     }
 
-    @PutMapping("/user")
-    public ResponseEntity<JsonResponse> updateUser(@RequestBody UserRequest.update update){
-        userService.updateUser(update);
+    @PutMapping("/auth/user")
+    public ResponseEntity<JsonResponse> updateUser(@RequestBody UserRequest.update update, HttpServletRequest request){
+        String userCode = jwtService.resolveToken(request);
+        System.out.println("userCode : "+userCode);
+        userService.updateUser(userCode,update);
         return ResponseEntity.ok(new JsonResponse(200,true,"updateUser",null));
     }
 

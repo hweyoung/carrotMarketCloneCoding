@@ -13,7 +13,6 @@ public class ProductRequest {
     @AllArgsConstructor
     @Data
     public static class create {
-        private String userCode;
         private String region;
         private String title;
         private String contents;
@@ -26,7 +25,6 @@ public class ProductRequest {
     @Data
     public static class update{
         private Long productIdx;
-        private String userCode;
         private String region;
         private String title;
         private String contents;
@@ -46,14 +44,6 @@ public class ProductRequest {
     @Data
     public static class delete {
         private Long productId;
-        private String userCode;
     }
 
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Data
-    public static class get {
-        private String userCode;
-
-    }
 }

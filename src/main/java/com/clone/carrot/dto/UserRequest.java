@@ -61,7 +61,6 @@ public class UserRequest {
     @AllArgsConstructor
     @Data
     public static class update {
-        private String userCode;
         private String nickname;
         private String email;
         private double mannerTemp;
