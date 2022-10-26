@@ -51,7 +51,8 @@ public class UserController {
         }catch (IllegalArgumentException e){
             return ResponseEntity.badRequest().body(new JsonResponse(400,false,"loginUser","redirect JoinUser"));
         }
-        return ResponseEntity.ok(new JsonResponse(200,true,"loginUser",token));
+        UserResponse.response response = new UserResponse.response(token, user.getCode());
+        return ResponseEntity.ok(new JsonResponse(200,true,"loginUser",response));
     }
 
     @PostMapping("/user/join")
@@ -69,7 +70,8 @@ public class UserController {
             System.out.println("user : "+user.toString());
             user = userService.joinUser(user);
             String token = jwtService.createToken(user.getCode());
-            return ResponseEntity.ok(new JsonResponse(200,true,"joinUser", token));
+            UserResponse.response response = new UserResponse.response(token, user.getCode());
+            return ResponseEntity.ok(new JsonResponse(200,true,"joinUser", response));
         }
             return ResponseEntity.badRequest().body(new JsonResponse(400,false,"loginUser","이미 회원가입된 유저"));
     }

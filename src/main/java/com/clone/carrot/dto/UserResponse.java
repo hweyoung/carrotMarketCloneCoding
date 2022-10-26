@@ -25,4 +25,13 @@ public class UserResponse {
         private String code;
         private String status;
     }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @Data
+    public static class response{
+        private String token;
+        private String userCode;
+    }
 }
